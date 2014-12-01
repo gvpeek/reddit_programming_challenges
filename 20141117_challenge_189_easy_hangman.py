@@ -9,7 +9,7 @@ from random import choice
  # -|-  |
  # / \  |
 
-with open(sys.path[0] + '/wordlist.txt', 'rb') as word_file:
+with open(sys.path[0] + '/20141117_challenge_189_easy_hangman_wordlist.txt', 'rb') as word_file:
     wordlist = [word.strip() for word in word_file]
 
 valid_guesses = set()
