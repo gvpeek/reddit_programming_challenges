@@ -16,58 +16,59 @@ valid_guesses = set()
 for word in wordlist:
     for letter in word:
         valid_guesses.add(letter)
-print valid_guesses
+print 'Valid Letters: ', valid_guesses
 
 word_to_be_guessed = choice(wordlist)
 guesses = []
 incorrect = 0 
 puzzle_solved = False
-hangman_display = {
-0 : '''  
+hangman_display = [
+'''  
   |----
       |
       |
       |
                    ''',
-1 : '''  
+'''  
   |----
   O   |
       |
       |
                    ''',
-2 : '''  
+'''  
   |----
   O   |
   |   |
       |
                    ''',
-3 : '''  
+'''  
   |----
  \O   |
   |   |
       |
                    ''',
-4 : '''  
+'''  
   |----
  \O/  |
   |   |
       |
                    ''',
-5 : '''  
+'''  
   |----
  \O/  |
   |   |
  /    |
                    ''',
-6 : '''  
+'''  
   |----
  \O/  |
   |   |
  / \  |
-                   ''',
-               }
+                   ''']
+                   
+max_incorrect = len(hangman_display) - 1
 
-while incorrect < 6 and not puzzle_solved:
+while incorrect < max_incorrect and not puzzle_solved:
     guess = None
     while not guess:
         user_input = raw_input("Guess a letter: ").lower()
@@ -98,6 +99,6 @@ while incorrect < 6 and not puzzle_solved:
         print 'You guessed the word!'
         puzzle_solved = True
         
-if incorrect >= 6:
+if incorrect >= max_incorrect:
     print 'Sorry. You lose. The word was ' + word_to_be_guessed
         
