@@ -4,10 +4,11 @@
   (require [clojure.java.io :as io]))
 
 (defn -main
-  "I don't do a whole lot ... yet."
+  "Reads in source book text and counts the number of occurrences of each word in the text."
   [& args]
-  ;; set file path, concatted strings have spaces in between, so they must be joined after
-  (def file-path (clojure.string/join (concat (System/getProperty "user.dir") "/resources/pg47498.txt")))
+  ;; set file path, concatted strings return a vector of characters, so converting to string
+  (def file-path (apply str (concat (System/getProperty "user.dir") "/resources/pg47498.txt")))
+  (defn strip-punc [word] (str (remove #((set (\. \; \: \,)) %) word)))
   ;; open file
   (with-open [book-text (io/reader file-path)]
   ;; read each line
@@ -15,4 +16,8 @@
       ;; split the line on spaces
       (doseq [word (str/split line #" ")]
       ;; skip spaces, otherwise catalog word
-        (if (= word "") nil (println word))))))
+        (if (= word "") nil (println #((strip-punc word))))
+      )
+    )
+  )
+)
