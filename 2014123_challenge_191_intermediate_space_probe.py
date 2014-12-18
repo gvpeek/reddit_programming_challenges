@@ -31,7 +31,7 @@ def create_grid(size):
         asteroid_set = False
         while not asteroid_set:
             rand_coord = choice(coords)
-            if grid[rand_coord] == '.':
+            if grid[rand_coord] != 'G':
                 grid[rand_coord] = 'A'
                 asteroid_set = True
     
@@ -46,4 +46,4 @@ def create_grid(size):
         
 
 if __name__ == '__main__':
-    create_grid(5)
+    create_grid(100)
