@@ -75,7 +75,7 @@ def a_star(grid, start, end):
     visited.append(start)
     while frontier:
         current = heapq.heappop(frontier)[1]
-        print 'visiting: ', current
+        # print 'visiting: ', current
         if current == end:
             print 'End Found!'
             break
@@ -86,16 +86,17 @@ def a_star(grid, start, end):
                 if ncoord not in visited and grid[ncoord] not in ['A', 'G', 'X']:
                     new_cost = calculate_cost(ncoord, end)
                     if ncoord not in cost_so_far or new_cost < cost_so_far[ncoord]:
-                        print 'appending: ', ncoord
+                        # print 'appending: ', ncoord, new_cost
                         heapq.heappush(frontier, (new_cost, ncoord))
+                        print frontier
                         came_from[ncoord] = current
                         cost_so_far[ncoord] = new_cost
                 visited.append(ncoord)
                 
             
-    print 'frontier', frontier
-    print 'visited', visited
-    print 'Came From: ', came_from
+    # print 'frontier', frontier
+    # print 'visited', visited
+    # print 'Came From: ', came_from
     print 'cost_so_far', cost_so_far
     
     return came_from
@@ -125,6 +126,8 @@ if __name__ == '__main__':
         for y in xrange(size):
             if (x,y) in path and (x,y) != board['start'] and (x,y) != board['end']:
                 print 'O',
+            elif board['grid'][(x,y)] == 'X':
+                print '.',
             else:
                 print board['grid'][(x,y)],
         print
