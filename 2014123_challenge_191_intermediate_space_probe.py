@@ -1,5 +1,8 @@
+import heapq
+
 from math import floor
 from random import choice
+from collections import OrderedDict
 
 neighbors = [(-1,1),(0,1),(1,1),(-1,0),(1,0),(-1,-1),(0,-1),(1,-1)]
 
@@ -7,8 +10,8 @@ def create_board(size):
     grid = {}
     start = None
     end = None
-    nbr_asteroids = int(floor(size * size * .3))
-    nbr_wells = int(floor(size * size * .1))
+    nbr_asteroids = int(floor(size * size * .1))## .3))
+    nbr_wells = int(floor(size * size * .05 )) ##.1))
     coords = [(x,y) for x in xrange(size) for y in xrange(size)]
         
     for coord in coords:
@@ -57,42 +60,71 @@ def create_board(size):
             'start': start,
             'end': end}
 
+def calculate_cost(node, end):
+    return abs(node[0] - end[0]) + abs(node[1] - end[1])
+
 def a_star(grid, start, end):
     visited = []
-    frontier =[start]
+    frontier =[]
+    heapq.heappush(frontier, (None, start))
     coords = grid.keys()
-    came_from = {}
+    came_from = OrderedDict()
     cost_so_far = {}
     
     
     visited.append(start)
     while frontier:
-        current = frontier.pop()
+        current = heapq.heappop(frontier)[1]
         print 'visiting: ', current
         if current == end:
             print 'End Found!'
             break
         for coord in neighbors:
             ncoord = (current[0]+coord[0], current[1]+coord[1])
-            if not ncoord in visited and ncoord in coords and grid[ncoord] not in ['A', 'G', 'X']:
-                print 'appending: ', ncoord
-                frontier.append(ncoord)
-            visited.append(ncoord)
-            came_from[ncoord] = current
+            ## make sure node exists on the board
+            if ncoord in coords:
+                if ncoord not in visited and grid[ncoord] not in ['A', 'G', 'X']:
+                    new_cost = calculate_cost(ncoord, end)
+                    if ncoord not in cost_so_far or new_cost < cost_so_far[ncoord]:
+                        print 'appending: ', ncoord
+                        heapq.heappush(frontier, (new_cost, ncoord))
+                        came_from[ncoord] = current
+                        cost_so_far[ncoord] = new_cost
+                visited.append(ncoord)
+                
             
     print 'frontier', frontier
     print 'visited', visited
     print 'Came From: ', came_from
+    print 'cost_so_far', cost_so_far
+    
+    return came_from
 
+def reconstruct_path(came_from, start, end):
+   current = end
+   path = [current]
+   while current != start:
+      current = came_from[current]
+      path.append(current)
+      print path
+   return path
 
 if __name__ == '__main__':
     size = 25
     board = create_board(size)
     
-    a_star(board['grid'], board['start'], board['end'])
+    came_from = a_star(board['grid'], board['start'], board['end'])
+    
+    path=[]
+    if board['end'] in came_from:
+        path = reconstruct_path(came_from, board['start'], board['end'])
+        print 'Path:', path
     
     print board['start'], board['end']
     for x in xrange(size):
         for y in xrange(size):
-            print board['grid'][(x,y)],
+            if (x,y) in path and (x,y) != board['start'] and (x,y) != board['end']:
+                print 'O',
+            else:
+                print board['grid'][(x,y)],
         print
