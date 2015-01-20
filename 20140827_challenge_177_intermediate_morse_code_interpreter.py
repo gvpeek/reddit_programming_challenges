@@ -1,3 +1,4 @@
+import os
 import re
 import wave
 
@@ -38,74 +39,90 @@ def word_space():
         tone += pack('h', 0) 
     return tone
 
-translation = {'a' : [short_tone(),long_tone()],
-               'b' : [long_tone(),short_tone(),short_tone(),short_tone()],
-               'c' : [long_tone(),short_tone(),long_tone(),short_tone()],
-               'd' : [long_tone(),short_tone(),short_tone()],
-               'e' : [short_tone()],
-               'f' : [short_tone(),short_tone(),long_tone(),short_tone()],
-               'g' : [long_tone(), long_tone(),short_tone()],
-               'h' : [short_tone(),short_tone(),short_tone(),short_tone()],
-               'i' : [short_tone(),short_tone()],
-               'j' : [short_tone(),long_tone(), long_tone(), long_tone()],
-               'k' : [long_tone(),short_tone(),long_tone()],
-               'l' : [short_tone(),long_tone(),short_tone(),short_tone()],
-               'm' : [long_tone(), long_tone()],
-               'n' : [long_tone(),short_tone()],
-               'o' : [long_tone(), long_tone(), long_tone()],
-               'p' : [short_tone(),long_tone(), long_tone(),short_tone()],
-               'q' : [long_tone(), long_tone(),short_tone(),long_tone()],
-               'r' : [short_tone(),long_tone(),short_tone()],
-               's' : [short_tone(),short_tone(),short_tone()],
-               't' : [long_tone()],
-               'u' : [short_tone(),short_tone(),long_tone()],
-               'v' : [short_tone(),short_tone(),short_tone(),long_tone()],
-               'w' : [short_tone(),long_tone(), long_tone()],
-               'x' : [long_tone(),short_tone(),short_tone(),long_tone()],
-               'y' : [long_tone(),short_tone(),long_tone(), long_tone()],
-               'z' : [long_tone(), long_tone(),short_tone(),short_tone()],
-               '1' : [short_tone(),long_tone(), long_tone(), long_tone(), long_tone()],
-               '2' : [short_tone(),short_tone(),long_tone(), long_tone(), long_tone()],
-               '3' : [short_tone(),short_tone(),short_tone(),long_tone(), long_tone()],
-               '4' : [short_tone(),short_tone(),short_tone(),short_tone(),long_tone()],
-               '5' : [short_tone(),short_tone(),short_tone(),short_tone(),short_tone()],
-               '6' : [long_tone(),short_tone(),short_tone(),short_tone(),short_tone()],
-               '7' : [long_tone(), long_tone(),short_tone(),short_tone(),short_tone()],
-               '8' : [long_tone(), long_tone(), long_tone(),short_tone(),short_tone()],
-               '9' : [long_tone(), long_tone(), long_tone(), long_tone(),short_tone()],
-               '0' : [long_tone(), long_tone(), long_tone(), long_tone(), long_tone()],}
+def translate(input):
+    tone_types = {'.' : short_tone(),
+                  '-' : long_tone()}
+
+    translation = {'a' : ['.','-'],
+                   'b' : ['-', '.', '.', '.'],
+                   'c' : ['-', '.','-', '.'],
+                   'd' : ['-', '.', '.'],
+                   'e' : ['.'],
+                   'f' : ['.', '.','-', '.'],
+                   'g' : ['-', '-', '.'],
+                   'h' : ['.', '.', '.', '.'],
+                   'i' : ['.', '.'],
+                   'j' : ['.','-', '-', '-'],
+                   'k' : ['-', '.','-'],
+                   'l' : ['.','-', '.', '.'],
+                   'm' : ['-', '-'],
+                   'n' : ['-', '.'],
+                   'o' : ['-', '-', '-'],
+                   'p' : ['.','-', '-', '.'],
+                   'q' : ['-', '-', '.','-'],
+                   'r' : ['.','-', '.'],
+                   's' : ['.', '.', '.'],
+                   't' : ['-'],
+                   'u' : ['.', '.','-'],
+                   'v' : ['.', '.', '.','-'],
+                   'w' : ['.','-', '-'],
+                   'x' : ['-', '.', '.','-'],
+                   'y' : ['-', '.','-', '-'],
+                   'z' : ['-', '-', '.', '.'],
+                   '1' : ['.','-', '-', '-', '-'],
+                   '2' : ['.', '.','-', '-', '-'],
+                   '3' : ['.', '.', '.','-', '-'],
+                   '4' : ['.', '.', '.', '.','-'],
+                   '5' : ['.', '.', '.', '.', '.'],
+                   '6' : ['-', '.', '.', '.', '.'],
+                   '7' : ['-', '-', '.', '.', '.'],
+                   '8' : ['-', '-', '-', '.', '.'],
+                   '9' : ['-', '-', '-', '-', '.'],
+                   '0' : ['-', '-', '-', '-', '-'],
+                   '.' : ['.','-', '.','-', '.','-'],
+                   ',' : ['-', '-', '.', '.','-', '-'],
+                   '/' : ['-', '.', '.','-', '.'],
+                   '+' : ['.','-', '.','-', '.'],
+                   '=' : ['-', '.', '.', '.','-'],
+                   '?' : ['.', '.','-', '-', '.', '.'],
+                   '(' : ['-', '.','-', '-', '.'],
+                   ')' : ['-', '.','-', '-', '.','-'],
+                   '-' : ['-', '.', '.', '.', '.','-'],
+                   '"' : ['.','-', '.', '.','-', '.'],
+                   '_' : ['.', '.','-', '-', '.','-'],
+                   "'" : ['.','-', '-', '-', '-', '.'],
+                   ':' : ['-', '-', '-', '.', '.', '.'],
+                   ';' : ['-', '.','-', '.','-', '.'],
+                   '$' : ['.', '.', '.','-', '.', '.','-']}
                
-# Period short_tone(),long_tone(),short_tone(),long_tone(),short_tone(),long_tone(),
-# Comma long_tone(), long_tone(),short_tone(),short_tone(),long_tone(), long_tone(),
-# Slash long_tone(),short_tone(),short_tone(),long_tone(),short_tone(),
-# Plus short_tone(),long_tone(),short_tone(),long_tone(),short_tone(),
-# Equal long_tone(),short_tone(),short_tone(),short_tone(),long_tone(),
-# Question short_tone(),short_tone(),long_tone(), long_tone(),short_tone(),short_tone(),
-# Open Paren long_tone(),short_tone(),long_tone(), long_tone(),short_tone(),
-# Close Paren long_tone(),short_tone(),long_tone(), long_tone(),short_tone(),long_tone(),
-# Dash long_tone(),short_tone(),short_tone(),short_tone(),short_tone(),long_tone(),
-# Quote short_tone(),long_tone(),short_tone(),short_tone(),long_tone(),short_tone(),
-# Underscore short_tone(),short_tone(),long_tone(), long_tone(),short_tone(),long_tone(),
-# Single Quote short_tone(),long_tone(), long_tone(), long_tone(), long_tone(),short_tone(),
-# Colon long_tone(), long_tone(), long_tone(),short_tone(),short_tone(),short_tone(),
-# Semicolon long_tone(),short_tone(),long_tone(),short_tone(),long_tone(),short_tone(),
-# Dollar Sign short_tone(),short_tone(),short_tone(),long_tone(),short_tone(),short_tone(),long_tone(),
+    execution_dir = os.path.dirname(os.path.realpath(__file__))
+    wave_file = wave.open(os.path.join(execution_dir, 'morse_translation.wav'), 'w')
+    ## params = nchannels, sampwidth, framerate, nframes, comptype, compname
+    wave_file.setparams((1, 2, RATE, 0, 'NONE', 'not compressed'))
+    wave_data = ''
 
-wave_file = wave.open('morse_translation.wav', 'w')
-## params = nchannels, sampwidth, framerate, nframes, comptype, compname
-wave_file.setparams((1, 2, RATE, 0, 'NONE', 'not compressed'))
-wave_data = ''
+    words = re.split('\W+', user_input)
 
-words = re.split('\W+', 'Morse code is a lot of fun')
+    morse_text =[]
+    for word in words:
+        dot_notation = ''
+        for letter in word.lower():
+            for tone in translation[letter]:
+                dot_notation += tone
+                wave_data += tone_types[tone]
+                wave_data += tone_space()
+            wave_data += letter_space()
+            dot_notation += ' '
+        wave_data += word_space()
+        morse_text.append(dot_notation)
 
-for word in words:
-    for letter in word.lower():
-        for tone in translation[letter]:
-            wave_data += tone
-            wave_data += tone_space()
-        wave_data += letter_space()
-    word_space()
+    wave_file.writeframes(wave_data)
+    wave_file.close()
+    
+    print morse_text
 
-
-wave_file.writeframes(wave_data)
-wave_file.close()
+if __name__ == '__main__':
+    while True:
+        user_input = raw_input('Enter a phrase to be translated to morse code: ')
+        break
+    translate(user_input)
