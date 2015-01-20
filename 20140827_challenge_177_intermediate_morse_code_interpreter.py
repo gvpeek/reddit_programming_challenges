@@ -5,39 +5,31 @@ import wave
 from struct import pack
 from math import sin
 
-RATE=44100
-base_duration=.1
-max_vol=2**15 - 1.0 #maximum amplitude
+RATE = 44100
+base_duration = .1
+max_vol = 2**15 - 1.0
+hertz = 5000.0
+
+def generate_tone(length_multiplier, volume):
+    tone = ''
+    for i in xrange(0, int(RATE * (base_duration * length_multiplier))):
+        tone += pack('h', volume * sin(i * hertz / RATE))
+    return tone
 
 def long_tone():
-    tone = ''
-    for i in xrange(0, int(RATE * (base_duration * 3))):
-        tone += pack('h', max_vol * sin(i * 5000.0 / RATE))
-    return tone
+    return generate_tone(3, max_vol)
         
 def short_tone():
-    tone = ''
-    for i in xrange(0, int(RATE * base_duration)):
-        tone += pack('h', max_vol * sin(i * 5000.0 / RATE)) 
-    return tone
+    return generate_tone(1, max_vol)
 
 def tone_space():
-    tone = ''
-    for i in xrange(0, int(RATE * (base_duration))):
-        tone += pack('h', 0) 
-    return tone
+    return generate_tone(1, 0)
     
 def letter_space():
-    tone = ''
-    for i in xrange(0, int(RATE * (base_duration * 3))):
-        tone += pack('h', 0) 
-    return tone
+    return generate_tone(3, 0)
 
 def word_space():
-    tone = ''
-    for i in xrange(0, int(RATE * (base_duration * 7))):
-        tone += pack('h', 0) 
-    return tone
+    return generate_tone(7, 0)
 
 def translate(input):
     tone_types = {'.' : short_tone(),
@@ -101,18 +93,19 @@ def translate(input):
     wave_file.setparams((1, 2, RATE, 0, 'NONE', 'not compressed'))
     wave_data = ''
 
-    words = re.split('\W+', user_input)
+    words = re.split('\W+', user_input.strip())
 
     morse_text =[]
     for word in words:
         dot_notation = ''
-        for letter in word.lower():
+        for i, letter in enumerate(word.lower()):
             for tone in translation[letter]:
                 dot_notation += tone
                 wave_data += tone_types[tone]
                 wave_data += tone_space()
             wave_data += letter_space()
-            dot_notation += ' '
+            if not len(word) == i+1:
+                dot_notation += ' '
         wave_data += word_space()
         morse_text.append(dot_notation)
 
