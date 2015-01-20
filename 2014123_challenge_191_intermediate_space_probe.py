@@ -1,7 +1,7 @@
 import heapq
 
 from math import floor
-from random import choice
+from random import choice, randint
 from collections import OrderedDict
 
 neighbors = [(-1,1),(0,1),(1,1),(-1,0),(1,0),(-1,-1),(0,-1),(1,-1)]
@@ -10,8 +10,8 @@ def create_board(size):
     grid = {}
     start = None
     end = None
-    nbr_asteroids = int(floor(size * size * .1))## .3))
-    nbr_wells = int(floor(size * size * .05 )) ##.1))
+    nbr_asteroids = int(floor(size * size * .3))
+    nbr_wells = int(floor(size * size * .05))
     coords = [(x,y) for x in xrange(size) for y in xrange(size)]
         
     for coord in coords:
@@ -88,16 +88,18 @@ def a_star(grid, start, end):
                     if ncoord not in cost_so_far or new_cost < cost_so_far[ncoord]:
                         # print 'appending: ', ncoord, new_cost
                         heapq.heappush(frontier, (new_cost, ncoord))
-                        print frontier
+                        # print frontier
                         came_from[ncoord] = current
                         cost_so_far[ncoord] = new_cost
                 visited.append(ncoord)
-                
+    
+    if end not in came_from:
+        print 'No Complete Path!'           
             
     # print 'frontier', frontier
     # print 'visited', visited
     # print 'Came From: ', came_from
-    print 'cost_so_far', cost_so_far
+    # print 'cost_so_far', cost_so_far
     
     return came_from
 
@@ -107,11 +109,12 @@ def reconstruct_path(came_from, start, end):
    while current != start:
       current = came_from[current]
       path.append(current)
-      print path
+      # print path
    return path
 
 if __name__ == '__main__':
-    size = 25
+    size = randint(5,90)
+    print 'Size: ', size
     board = create_board(size)
     
     came_from = a_star(board['grid'], board['start'], board['end'])
@@ -121,7 +124,7 @@ if __name__ == '__main__':
         path = reconstruct_path(came_from, board['start'], board['end'])
         print 'Path:', path
     
-    print board['start'], board['end']
+    print 'Start: ', board['start'], 'End:', board['end']
     for x in xrange(size):
         for y in xrange(size):
             if (x,y) in path and (x,y) != board['start'] and (x,y) != board['end']:
