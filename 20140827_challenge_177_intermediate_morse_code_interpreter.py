@@ -1,3 +1,4 @@
+import re
 import wave
 
 from struct import pack
@@ -10,13 +11,13 @@ max_vol=2**15 - 1.0 #maximum amplitude
 def long_tone():
     tone = ''
     for i in xrange(0, int(RATE * (base_duration * 3))):
-        tone += pack('h', max_vol * sin(i * 4000.0 / RATE))
+        tone += pack('h', max_vol * sin(i * 5000.0 / RATE))
     return tone
         
 def short_tone():
     tone = ''
     for i in xrange(0, int(RATE * base_duration)):
-        tone += pack('h', max_vol * sin(i * 4000.0 / RATE)) 
+        tone += pack('h', max_vol * sin(i * 5000.0 / RATE)) 
     return tone
 
 def tone_space():
@@ -73,17 +74,37 @@ translation = {'a' : [short_tone(),long_tone()],
                '8' : [long_tone(), long_tone(), long_tone(),short_tone(),short_tone()],
                '9' : [long_tone(), long_tone(), long_tone(), long_tone(),short_tone()],
                '0' : [long_tone(), long_tone(), long_tone(), long_tone(), long_tone()],}
+               
+# Period short_tone(),long_tone(),short_tone(),long_tone(),short_tone(),long_tone(),
+# Comma long_tone(), long_tone(),short_tone(),short_tone(),long_tone(), long_tone(),
+# Slash long_tone(),short_tone(),short_tone(),long_tone(),short_tone(),
+# Plus short_tone(),long_tone(),short_tone(),long_tone(),short_tone(),
+# Equal long_tone(),short_tone(),short_tone(),short_tone(),long_tone(),
+# Question short_tone(),short_tone(),long_tone(), long_tone(),short_tone(),short_tone(),
+# Open Paren long_tone(),short_tone(),long_tone(), long_tone(),short_tone(),
+# Close Paren long_tone(),short_tone(),long_tone(), long_tone(),short_tone(),long_tone(),
+# Dash long_tone(),short_tone(),short_tone(),short_tone(),short_tone(),long_tone(),
+# Quote short_tone(),long_tone(),short_tone(),short_tone(),long_tone(),short_tone(),
+# Underscore short_tone(),short_tone(),long_tone(), long_tone(),short_tone(),long_tone(),
+# Single Quote short_tone(),long_tone(), long_tone(), long_tone(), long_tone(),short_tone(),
+# Colon long_tone(), long_tone(), long_tone(),short_tone(),short_tone(),short_tone(),
+# Semicolon long_tone(),short_tone(),long_tone(),short_tone(),long_tone(),short_tone(),
+# Dollar Sign short_tone(),short_tone(),short_tone(),long_tone(),short_tone(),short_tone(),long_tone(),
 
 wave_file = wave.open('morse_translation.wav', 'w')
 ## params = nchannels, sampwidth, framerate, nframes, comptype, compname
 wave_file.setparams((1, 2, RATE, 0, 'NONE', 'not compressed'))
 wave_data = ''
 
-for letter in 'Hello'.lower():
-    for tone in translation[letter]:
-        wave_data += tone
-        wave_data += tone_space()
-    wave_data += letter_space()
+words = re.split('\W+', 'Morse code is a lot of fun')
+
+for word in words:
+    for letter in word.lower():
+        for tone in translation[letter]:
+            wave_data += tone
+            wave_data += tone_space()
+        wave_data += letter_space()
+    word_space()
 
 
 wave_file.writeframes(wave_data)
