@@ -88,7 +88,8 @@ def translate(input):
                    '$' : ['.', '.', '.','-', '.', '.','-']}
                
     execution_dir = os.path.dirname(os.path.realpath(__file__))
-    wave_file = wave.open(os.path.join(execution_dir, 'morse_translation.wav'), 'w')
+    file_path = os.path.join(execution_dir, 'morse_translation.wav')
+    wave_file = wave.open(file_path, 'w')
     ## params = nchannels, sampwidth, framerate, nframes, comptype, compname
     wave_file.setparams((1, 2, RATE, 0, 'NONE', 'not compressed'))
     wave_data = ''
@@ -112,10 +113,14 @@ def translate(input):
     wave_file.writeframes(wave_data)
     wave_file.close()
     
-    print morse_text
+    return {'morse_text' : morse_text,
+            'file_location' : file_path }
 
 if __name__ == '__main__':
     while True:
         user_input = raw_input('Enter a phrase to be translated to morse code: ')
         break
-    translate(user_input)
+    translation = translate(user_input)
+    print 'Wave file available here:', translation['file_location']
+    print translation['morse_text']
+    
