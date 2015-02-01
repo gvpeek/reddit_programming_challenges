@@ -7,6 +7,8 @@ from collections import defaultdict
 execution_dir = os.path.dirname(os.path.realpath(__file__))
 file_path = os.path.join(execution_dir, 'holy_grail.txt')
 
+speaker = re.compile(r'.*:')
+
 stage_directions = 0
 scene = 0
 total_words = 0
@@ -14,7 +16,7 @@ words_per_scene = 0
 scene_words = defaultdict(int)
 with open(file_path, 'r+') as script:
     for line in script:
-        print line
+        # print line
         scene_nbr = re.match('^Scene (\d+)', line)
         if scene_nbr:
             if scene:
@@ -27,11 +29,15 @@ with open(file_path, 'r+') as script:
                     pct = count / float(words_per_scene)
                     print 'Word: {0} \t Count: {1} \t Pct: {2:.2%}'.format(top_word, count, pct)
             words_per_scene = 0
+            scene_words = defaultdict(int)
             scene = scene_nbr.group(1)
         if '[' in line and ']' in line:
             stage_directions += 1
         else:
             words = line.split()
+            if words:
+                if speaker.match(words[0]):
+                    del words[0]
             total_words += len(words)
             words_per_scene += len(words)
             for word in words:
