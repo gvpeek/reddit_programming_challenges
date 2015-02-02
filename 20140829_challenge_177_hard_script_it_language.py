@@ -21,7 +21,7 @@ with open(file_path, 'r+') as script:
         if scene_nbr:
             if scene:
                 print
-                print 'Scene', scene, words_per_scene
+                print 'Scene', scene, words_per_scene, 'words'
                 word_list = []
                 for word, count in scene_words.iteritems():
                     heapq.heappush(word_list, (count, word))
@@ -34,9 +34,12 @@ with open(file_path, 'r+') as script:
         if '[' in line and ']' in line:
             stage_directions += 1
         else:
+            speaker_name = speaker.match(line)
+            if speaker_name:
+                line = line.replace(speaker_name.group(), '', 1)
             words = line.split()
             if words:
-                if speaker.match(words[0]):
+                if (words[0]):
                     del words[0]
             total_words += len(words)
             words_per_scene += len(words)
