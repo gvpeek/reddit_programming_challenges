@@ -1,3 +1,6 @@
+import re
+import string
+
 phrases = {'lol' : 'laugh out loud',
            'dw' : 'don\'t worry',
            'hf' : 'have fun',
@@ -11,11 +14,13 @@ phrases = {'lol' : 'laugh out loud',
 }
 
 def translate(phrase):
-    words = phrase.split()
+    words = re.findall(r'[\w+]+|[' + string.punctuation + ']', phrase)
     output = ''
     for word in words:
-        if word in phrases:
-            output += phrases[word]
+        if word in string.punctuation:
+            output += word
+        elif word in phrases:
+            output += ' ' + phrases[word]
         else:
             output += ' ' + word
     print output
