@@ -1,42 +1,51 @@
-input_code='''
-    _  _     _  _  _  _  _
-  | _| _||_||_ |_   ||_||_|
-  ||_  _|  | _||_|  ||_| _|
-'''
+input_codes=[
+ ''' _  _  _  _  _  _  _  _  _ 
+    | || || || || || || || || |
+    |_||_||_||_||_||_||_||_||_|
+ ''',
+ '''                           
+      |  |  |  |  |  |  |  |  |
+      |  |  |  |  |  |  |  |  |
+ ''',
+ '''     _  _  _  _  _  _     _ 
+     |_||_|| || ||_   |  |  ||_ 
+       | _||_||_||_|  |  |  | _|
+ '''
+]
 
 input_digits=['490067715', '000000000', '2424.5757', '111111111']
 
 display_mapping ={
-    1 : ((' ', ' ', ' '), 
-         (' ', ' ', '|'),
-         (' ', ' ', '|')),
-    2 : ((' ', '_', ' '), 
-         (' ', '_', '|'),
-         ('|', '_', ' ')),
-    3 : ((' ', '_', ' '), 
-         (' ', '_', '|'),
-         (' ', '_', '|')),
-    4 : ((' ', ' ', ' '), 
-         ('|', '_', '|'),
-         (' ', ' ', '|')),
-    5 : ((' ', '_', ' '), 
-         ('|', '_', ' '),
-         (' ', '_', '|')),
-    6 : ((' ', '_', ' '), 
-         ('|', '_', ' '),
-         ('|', '_', '|')),
-    7 : ((' ', '_', ' '), 
-         (' ', ' ', '|'),
-         (' ', ' ', '|')),
-    8 : ((' ', '_', ' '), 
-         ('|', '_', '|'),
-         ('|', '_', '|')),
-    9 : ((' ', '_', ' '), 
-         ('|', '_', '|'),
-         (' ', '_', '|')),
-    0 : ((' ', '_', ' '), 
-         ('|', ' ', '|'),
-         ('|', '_', '|')),
+    1 : (('   '), 
+         ('  |'),
+         ('  |')),
+    2 : ((' _ '), 
+         (' _|'),
+         ('|_ ')),
+    3 : ((' _ '), 
+         (' _|'),
+         (' _|')),
+    4 : (('   '), 
+         ('|_|'),
+         ('  |')),
+    5 : ((' _ '), 
+         ('|_ '),
+         (' _|')),
+    6 : ((' _ '), 
+         ('|_ '),
+         ('|_|')),
+    7 : ((' _ '), 
+         ('  |'),
+         ('  |')),
+    8 : ((' _ '), 
+         ('|_|'),
+         ('|_|')),
+    9 : ((' _ '), 
+         ('|_|'),
+         (' _|')),
+    0 : ((' _ '), 
+         ('| |'),
+         ('|_|')),
 }
 
 digit_mapping={val: key for key, val in display_mapping.iteritems()}
@@ -52,13 +61,19 @@ def display_from_digits(digits):
     
     for digit in digits:
         for ix, line in enumerate(display_mapping[int(digit)]):
-            char_row = ''
-            for char in line:
-                char_row += char
-            display_rows[ix].append(char_row)
+            display_rows[ix].append(line)
 
     for line in display_rows:
         print ''.join(line)
-        
+
+def digits_from_display(display):
+    input_rows = display.split('\n') 
+    tranpose = [line for line in zip(*input_rows)]
+    print input_rows
+    print
+    print tranpose
+
 for entry in input_digits:
     display_from_digits(entry)
+for entry in input_codes:
+    digits_from_display(entry)
