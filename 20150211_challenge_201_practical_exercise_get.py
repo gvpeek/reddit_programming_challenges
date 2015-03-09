@@ -1,6 +1,9 @@
-from heapq import heappush, heappop
+import time
 
+from heapq import heappush, heappop
 from collections import OrderedDict
+from random import choice, randint
+from string import ascii_letters
 
 class DualPriorityQueueHeap():
     def __init__(self):
@@ -152,20 +155,46 @@ class DualPriorityQueueODPopFirst():
            was enqueued first, ignoring priority.'''
         return self.strings.popitem(last=False)[1][2]
 
+nbr_test_cases = 1000
+nbr_dequeue_cases = nbr_test_cases / 2
+print 'Generating test cases...'
+test_cases=[(randint(1,100000),
+             randint(1,100000),
+             ''.join([choice(ascii_letters) for x in xrange(8)])) for x in xrange(nbr_test_cases)]
+
+print 'Running tests...'
 for implementation in [DualPriorityQueueHeap, DualPriorityQueueODPopLast, DualPriorityQueueODPopFirst]:
-    # Rudimentary Checks
+    print implementation
     dpq = implementation()
-    dpq.enqueue(2,3,'Hello')
-    dpq.enqueue(1,2,'Goodbye')
-    dpq.enqueue(3,1,'What?')
-    dpq.enqueue(1,5,'Giggles')
-    dpq.enqueue(4,5,'Sniggles')
-    print dpq.count()
-    print dpq.dequeue_a()
-    print dpq.count()
-    dpq.enqueue(1,2,'Goodbye')
-    print dpq.dequeue_b()
-    print dpq.dequeue_first()
-    print dpq.count()
-    dpq.clear()
-    print dpq.count()
+    start_time = time.time()
+    for case in test_cases:
+        dpq.enqueue(*case)
+    elapsed_time = time.time() - start_time
+    print 'Enqueued list in {0} seconds.'.format(elapsed_time)
+    
+    start_time = time.time()
+    for x in xrange(nbr_dequeue_cases):
+        dpq.dequeue_a()
+        dpq.dequeue_b()
+    elapsed_time = time.time() - start_time
+    print 'Dequeued {0} items in {1} seconds.'.format(nbr_dequeue_cases * 2, elapsed_time)
+    print
+    
+    # # Rudimentary Checks
+    # dpq = implementation()
+    # dpq.enqueue(2,3,'Hello')
+    # dpq.enqueue(1,2,'Goodbye')
+    # dpq.enqueue(3,1,'What?')
+    # dpq.enqueue(1,5,'Giggles')
+    # dpq.enqueue(4,5,'Sniggles')
+    # print dpq.count()
+    # print dpq.dequeue_a()
+    # print dpq.count()
+    # dpq.enqueue(1,2,'Goodbye')
+    # print dpq.dequeue_b()
+    # print dpq.dequeue_first()
+    # print dpq.count()
+    # dpq.clear()
+    # print dpq.count()
+    
+    
